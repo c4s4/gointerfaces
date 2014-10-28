@@ -3,6 +3,7 @@ package main
 import (
     "archive/tar"
     "bufio"
+    "bytes"
     "compress/gzip"
     "fmt"
     "io"
@@ -59,40 +60,28 @@ func parseSourceFile(filename string, source io.Reader) []Interface {
 }
 
 func printInterfaces(interfaces []Interface) {
-    lenName := 0
-    lenPackage := 0
-    lenSourceFile := 0
-    lenLineNumber := 0
-    for _, i := range interfaces {
-        if len(i.Name) > lenName {
-            lenName = len(i.Name)
-        }
-        if len(i.Package) > lenPackage {
-            lenPackage = len(i.Package)
-        }
-        if len(i.SourceFile) > lenSourceFile {
-            lenSourceFile = len(i.SourceFile)
-        }
-        if len(i.LineNumber) > lenLineNumber {
-            lenLineNumber = len(i.LineNumber)
-        }
+    var buffer bytes.Buffer
+    buffer.WriteString("<table><tr><th>Interface</th><th>Package</th><th>Source</th><th>Line</th></tr>")
+    for _, interf := range interfaces {
+        buffer.WriteString("<tr><td>")
+        buffer.WriteString(interf.Name)
+        buffer.WriteString("</td><td>")
+        buffer.WriteString(interf.Package)
+        buffer.WriteString("</td><td>")
+        buffer.WriteString(interf.SourceFile)
+        buffer.WriteString("</td><td>")
+        buffer.WriteString(interf.LineNumber)
+        buffer.WriteString("</td></tr>")
     }
-    formatLine := "| %-" + strconv.Itoa(lenName) + "s | %-" + strconv.Itoa(lenPackage) +
-        "s | %-" + strconv.Itoa(lenSourceFile) + "s | %-" + strconv.Itoa(lenLineNumber) +
-        "s |\n"
-    fmt.Printf(formatLine, "Interface", "Package", "Source File", "Line")
-    separator := "|" + strings.Repeat("-", lenName+2) + "|" + strings.Repeat("-", lenPackage+2) +
-        "|" + strings.Repeat("-", lenSourceFile+2) + "|" + strings.Repeat("-", lenLineNumber+2) + "|"
-    fmt.Println(separator)
-    for _, i := range interfaces {
-        fmt.Printf(formatLine, i.Name, i.Package, i.SourceFile, i.LineNumber)
-    }
+    buffer.WriteString("</table>")
+    fmt.Println(buffer.String())
 }
 
 func main() {
     // read version on command line
     if len(os.Args) != 2 {
-        panic("Must pass go version on command line")
+        fmt.Println("Must pass go version on command line")
+        os.Exit(1)
     }
     version := os.Args[1]
     // download compressed archive
