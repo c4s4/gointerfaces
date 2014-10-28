@@ -1,0 +1,49 @@
+- build:       gointerfaces
+  description: Build gointerfaces project
+  default:
+  - clean
+  - publish
+
+- properties:
+    go_version:  "1.3.3"
+    name:        "gointerfaces"
+    build_dir:   "build"
+    article_md:  "#{name}.en.md"
+    article_xml: "#{name}.en.xml"
+    site_dir:    "../sweetohm"
+    article_dir: "#{site_dir}/pages"
+
+- target:      md
+  description: Generate md interfaces table
+  script:
+  - mkdir: :build_dir
+  - "go run gointerfaces.go #{go_version} > #{build_dir}/interfaces.md"
+
+- target:      xml
+  depends:     md
+  description: Generate XML article
+  script:
+  - cp:
+      src:  :article_md
+      dest: "#{build_dir}/#{article_md}"
+  - rb: |
+      article = File.read("#{build_dir}/#{article_md}")
+      interfaces = File.read("#{build_dir}/interfaces.md")
+      article['INTERFACES'] = interfaces
+      File.open("#{build_dir}/#{article_md}", 'w') { |file|
+        file.write(article)
+      }
+  - "md2xml -a #{build_dir}/#{article_md} > #{build_dir}/#{article_xml}"
+
+- target:      publish
+  depends:     xml
+  description: Publish article
+  script:
+  - cp:
+      src:  "#{build_dir}/#{article_xml}"
+      dest: :article_dir
+
+- target:      clean
+  description: Clean generated files
+  script:
+  - rmdir: :build_dir
