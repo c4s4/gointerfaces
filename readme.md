@@ -7,7 +7,7 @@ This program lists all public GO interfaces. To run it, just type:
 go run gointerfaces.go <version>
 ```
 
-Where *&lt;version>* is the GO version to parse.
+Where *&lt;version>* is the GO version to parse, for instance *1.3.3*.
 
 This compiles and runs the program that will:
 
