@@ -7,7 +7,7 @@
 % lang:     en
 % toc:      no
 
-While attending gotGo, where the buzzword was clearly *the interface*, I was wondering where I could find a list of all interfaces defined in the GO language. I found nowhere.
+While attending dotGo, where the buzzword was clearly *the interface*, I was wondering where I could find a list of all interfaces defined in the GO language. I found nowhere.
 
 Thus I decided to write a little GO program to build this list. You pass the GO version on the command line and this tool:
 
