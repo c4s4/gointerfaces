@@ -10,6 +10,7 @@ import (
     "os"
     "regexp"
     "sort"
+    "strconv"
     "strings"
 )
 
@@ -19,7 +20,7 @@ type Interface struct {
     Name       string
     Package    string
     SourceFile string
-    LineNumber int
+    LineNumber string
 }
 
 type ByName []Interface
@@ -29,31 +30,25 @@ func (b ByName) Swap(i, j int)      {b[i], b[j] = b[j], b[i]}
 func (b ByName) Less(i, j int) bool {return b[i].Name < b[j].Name}
 
 func parseSourceFile(filename string, source io.Reader) []Interface {
-    regexpPackage := regexp.MustCompile(`package\s+(.*)`)
     regexpInterface := regexp.MustCompile(`\s*type\s+([A-Z]\w*)\s+interface\s+{`)
     interfaces := make([]Interface, 0)
     reader := bufio.NewReader(source)
-    var pack []byte
-    lineNumber := 0
+    pack := filename[11:strings.LastIndex(filename, "/")]
+    lineNumber := 1
     for {
         line, err := reader.ReadBytes('\n')
         if err != nil && err != io.EOF {
             panic("Error parsing source file")
         }
-        packageMatch := regexpPackage.FindSubmatch(line)
-        if len(packageMatch) > 0 {
-            pack = packageMatch[1]
-        } else {
-            matches := regexpInterface.FindSubmatch(line)
-            if len(matches) > 0 {
-                interf := Interface {
-                    Name:       string(matches[1]),
-                    Package:    string(pack),
-                    SourceFile: filename,
-                    LineNumber: lineNumber,
-                }
-                interfaces = append(interfaces, interf)
+        matches := regexpInterface.FindSubmatch(line)
+        if len(matches) > 0 {
+            interf := Interface {
+                Name:       string(matches[1]),
+                Package:    string(pack),
+                SourceFile: filename,
+                LineNumber: strconv.Itoa(lineNumber),
             }
+            interfaces = append(interfaces, interf)
         }
         if err == io.EOF {
             break
@@ -63,6 +58,37 @@ func parseSourceFile(filename string, source io.Reader) []Interface {
     return interfaces
 }
 
+func printInterfaces(interfaces []Interface) {
+    lenName := 0
+    lenPackage := 0
+    lenSourceFile := 0
+    lenLineNumber := 0
+    for _, i := range interfaces {
+        if len(i.Name) > lenName {
+            lenName = len(i.Name)
+        }
+        if len(i.Package) > lenPackage {
+            lenPackage = len(i.Package)
+        }
+        if len(i.SourceFile) > lenSourceFile {
+            lenSourceFile = len(i.SourceFile)
+        }
+        if len(i.LineNumber) > lenLineNumber {
+            lenLineNumber = len(i.LineNumber)
+        }
+    }
+    formatLine := "| %-" + strconv.Itoa(lenName) + "s | %-" + strconv.Itoa(lenPackage) +
+        "s | %-" + strconv.Itoa(lenSourceFile) + "s | %-" + strconv.Itoa(lenLineNumber) +
+        "s |\n"
+    fmt.Printf(formatLine, "Interface", "Package", "Source File", "Line")
+    separator := "|" + strings.Repeat("-", lenName+2) + "|" + strings.Repeat("-", lenPackage+2) +
+        "|" + strings.Repeat("-", lenSourceFile+2) + "|" + strings.Repeat("-", lenLineNumber+2) + "|"
+    fmt.Println(separator)
+    for _, i := range interfaces {
+        fmt.Printf(formatLine, i.Name, i.Package, i.SourceFile, i.LineNumber)
+    }
+}
+
 func main() {
     // read version on command line
     if len(os.Args) != 2 {
@@ -70,7 +96,7 @@ func main() {
     }
     version := os.Args[1]
     // download compressed archive
-    fmt.Println("Downloading archive...")
+    println("Downloading archive...")
     response, err := http.Get(URL+"go"+version+".src.tar.gz")
     if err!=nil {
         panic(err)
@@ -82,7 +108,7 @@ func main() {
         panic(err)
     }
     // parse tar source files in go/src/pkg
-    fmt.Println("Parsing archive...")
+    println("Parsing archive...")
     tarReader := tar.NewReader(gzipReader)
     interfaces := make([]Interface, 0)
     for {
@@ -99,7 +125,5 @@ func main() {
     }
     // print the result
     sort.Sort(ByName(interfaces))
-    for _, interf := range interfaces {
-        println(interf.Name)
-    }
+    printInterfaces(interfaces)
 }
