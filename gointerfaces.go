@@ -14,13 +14,17 @@ import (
     "strings"
 )
 
-const URL = "https://storage.googleapis.com/golang/"
+const (
+    URL = "https://storage.googleapis.com/golang/"
+    SOURCE_URL = "https://code.google.com/p/go/source/browse/"
+)
 
 type Interface struct {
     Name       string
     Package    string
     SourceFile string
     LineNumber string
+    Link       string
 }
 
 type ByName []Interface
@@ -45,8 +49,9 @@ func parseSourceFile(filename string, source io.Reader) []Interface {
             interf := Interface {
                 Name:       string(matches[1]),
                 Package:    string(pack),
-                SourceFile: filename,
+                SourceFile: filename[3:],
                 LineNumber: strconv.Itoa(lineNumber),
+                Link:       SOURCE_URL+filename[3:]+"?name=release#"+strconv.Itoa(lineNumber),
             }
             interfaces = append(interfaces, interf)
         }
@@ -64,8 +69,8 @@ func printInterfaces(interfaces []Interface) {
     lenSourceFile := 0
     lenLineNumber := 0
     for _, i := range interfaces {
-        if len(i.Name) > lenName {
-            lenName = len(i.Name)
+        if len(i.Name)+len(i.Link)+4 > lenName {
+            lenName = len(i.Name)+len(i.Link)+4
         }
         if len(i.Package) > lenPackage {
             lenPackage = len(i.Package)
@@ -76,7 +81,7 @@ func printInterfaces(interfaces []Interface) {
         if len(i.LineNumber) > lenLineNumber {
             lenLineNumber = len(i.LineNumber)
         }
-    }
+     }
     formatLine := "%-" + strconv.Itoa(lenName) + "s  %-" + strconv.Itoa(lenPackage) +
         "s  %-" + strconv.Itoa(lenSourceFile) + "s  %-" + strconv.Itoa(lenLineNumber) +
         "s\n"
@@ -85,7 +90,8 @@ func printInterfaces(interfaces []Interface) {
         "  " + strings.Repeat("-", lenSourceFile) + "  " + strings.Repeat("-", lenLineNumber)
     fmt.Println(separator)
     for _, i := range interfaces {
-        fmt.Printf(formatLine, i.Name, i.Package, i.SourceFile, i.LineNumber)
+        link := "["+i.Name+"]("+i.Link+")"
+        fmt.Printf(formatLine, link, i.Package, i.SourceFile, i.LineNumber)
     }
 }
 
