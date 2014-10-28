@@ -9,6 +9,7 @@ import (
     "net/http"
     "os"
     "regexp"
+    "sort"
     "strings"
 )
 
@@ -21,10 +22,16 @@ type Interface struct {
     LineNumber int
 }
 
-func parseSourceFile(filename string, source io.Reader) []*Interface {
+type ByName []Interface
+
+func (b ByName) Len() int           {return len(b)}
+func (b ByName) Swap(i, j int)      {b[i], b[j] = b[j], b[i]}
+func (b ByName) Less(i, j int) bool {return b[i].Name < b[j].Name}
+
+func parseSourceFile(filename string, source io.Reader) []Interface {
     regexpPackage := regexp.MustCompile(`package\s+(.*)`)
     regexpInterface := regexp.MustCompile(`\s*type\s+([A-Z]\w*)\s+interface\s+{`)
-    interfaces := make([]*Interface, 0)
+    interfaces := make([]Interface, 0)
     reader := bufio.NewReader(source)
     var pack []byte
     lineNumber := 0
@@ -45,7 +52,7 @@ func parseSourceFile(filename string, source io.Reader) []*Interface {
                     SourceFile: filename,
                     LineNumber: lineNumber,
                 }
-                interfaces = append(interfaces, &interf)
+                interfaces = append(interfaces, interf)
             }
         }
         if err == io.EOF {
@@ -77,7 +84,7 @@ func main() {
     // parse tar source files in go/src/pkg
     fmt.Println("Parsing archive...")
     tarReader := tar.NewReader(gzipReader)
-    interfaces := make([]*Interface, 0)
+    interfaces := make([]Interface, 0)
     for {
         header, err := tarReader.Next()
         if err != nil {
@@ -91,6 +98,7 @@ func main() {
         }
     }
     // print the result
+    sort.Sort(ByName(interfaces))
     for _, interf := range interfaces {
         println(interf.Name)
     }
