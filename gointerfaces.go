@@ -77,12 +77,12 @@ func printInterfaces(interfaces []Interface) {
             lenLineNumber = len(i.LineNumber)
         }
     }
-    formatLine := "| %-" + strconv.Itoa(lenName) + "s | %-" + strconv.Itoa(lenPackage) +
-        "s | %-" + strconv.Itoa(lenSourceFile) + "s | %-" + strconv.Itoa(lenLineNumber) +
-        "s |\n"
+    formatLine := "%-" + strconv.Itoa(lenName) + "s  %-" + strconv.Itoa(lenPackage) +
+        "s  %-" + strconv.Itoa(lenSourceFile) + "s  %-" + strconv.Itoa(lenLineNumber) +
+        "s\n"
     fmt.Printf(formatLine, "Interface", "Package", "Source File", "Line")
-    separator := "|" + strings.Repeat("-", lenName+2) + "|" + strings.Repeat("-", lenPackage+2) +
-        "|" + strings.Repeat("-", lenSourceFile+2) + "|" + strings.Repeat("-", lenLineNumber+2) + "|"
+    separator := strings.Repeat("-", lenName) + "  " + strings.Repeat("-", lenPackage) +
+        "  " + strings.Repeat("-", lenSourceFile) + "  " + strings.Repeat("-", lenLineNumber)
     fmt.Println(separator)
     for _, i := range interfaces {
         fmt.Printf(formatLine, i.Name, i.Package, i.SourceFile, i.LineNumber)
