@@ -30,6 +30,7 @@
       article = File.read("#{build_dir}/#{article_md}")
       interfaces = File.read("#{build_dir}/interfaces.md")
       article['INTERFACES'] = interfaces
+      article['VERSION'] = go_version
       File.open("#{build_dir}/#{article_md}", 'w') { |file|
         file.write(article)
       }
