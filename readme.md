@@ -16,9 +16,9 @@ This compiles and runs the program that will:
 - Extract all interface declarations.
 - Print them on the console in markdown table format.
 
-To get result in HTML, you can pipe tge output to *pandoc* to convert to HTML :
+To get result in HTML, you can pipe the output to *pandoc*:
 
-```
+```sh
 go run gointerfaces.go 1.3.3 | pandoc -f markdown -t html
 ```
 
