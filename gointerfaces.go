@@ -38,6 +38,9 @@ func parseSourceFile(filename string, source io.Reader) []Interface {
     interfaces := make([]Interface, 0)
     reader := bufio.NewReader(source)
     pack := filename[11:strings.LastIndex(filename, "/")]
+    if strings.HasSuffix(pack, "testdata") {
+        return nil
+    }
     lineNumber := 1
     for {
         line, err := reader.ReadBytes('\n')
