@@ -124,7 +124,8 @@ func main() {
         }
         if strings.HasPrefix(header.Name, "go/src/pkg") &&
            strings.HasSuffix(header.Name, ".go") &&
-           !strings.HasSuffix(header.Name, "doc.go") {
+           !strings.HasSuffix(header.Name, "doc.go") &&
+           !strings.HasSuffix(header.Name, "_test.go") {
             newInterfaces := parseSourceFile(header.Name, tarReader)
             interfaces = append(interfaces, newInterfaces...)
         }
