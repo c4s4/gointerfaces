@@ -37,6 +37,7 @@
       }
 
 - target:      md
+  depends:     interfaces
   description: Generate md interfaces table
   script:
   - cp:
