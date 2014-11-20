@@ -7,18 +7,18 @@
 % lang:     en
 % toc:      no
 
-While attending gotGo, where the buzzword was clearly *the interface*, I was wondering where I could find a list of all interfaces defined in the GO language. I found nowhere.
+While attending dotGo, where the buzzword was clearly *the interface*, I was wondering where I could find a list of all interfaces defined in the GO language. I found nowhere.
 
-Thus I decided to write a little GO program to build this list. You pass the GO version on the command line and this tool:
+Thus I decided to write a little GO program that would;
 
-- Downloads the source tarball.
+- Downloads the GO source tarball for a given version.
 - Parses source files to extract the interface names and line number where they are defined.
 - Write this list on the console in the markdown format.
 
-Here is the result:
+The project is on Github: <https://github.com/c4s4/gointerfaces>.
+
+Here is the result for release *VERSION*:
 
 INTERFACES
-
-The project is on Github : <https://github.com/c4s4/gointerfaces>.
 
 *Enjoy!*

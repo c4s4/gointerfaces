@@ -8,20 +8,37 @@
     go_version:  "1.3.3"
     name:        "gointerfaces"
     build_dir:   "build"
+    blog_md:     "#{name}.md"
     article_md:  "#{name}.en.md"
     article_xml: "#{name}.en.xml"
     site_dir:    "../sweetohm"
     article_dir: "#{site_dir}/pages"
 
-- target:      md
-  description: Generate md interfaces table
+- target:      interfaces
+  description: Generate interfaces list
   script:
   - mkdir: :build_dir
   - "go run gointerfaces.go #{go_version} > #{build_dir}/interfaces.md"
 
-- target:      xml
-  depends:     md
-  description: Generate XML article
+- target:      blog
+  depends:     interfaces
+  description: Generate md interfaces table
+  script:
+  - cp:
+      src:  :blog_md
+      dest: "#{build_dir}/#{blog_md}"
+  - rb: |
+      article = File.read("#{build_dir}/#{blog_md}")
+      interfaces = File.read("#{build_dir}/interfaces.md")
+      article['INTERFACES'] = interfaces
+      article['VERSION'] = go_version
+      File.open("#{build_dir}/#{blog_md}", 'w') { |file|
+        file.write(article)
+      }
+
+- target:      md
+  depends:     interfaces
+  description: Generate md interfaces table
   script:
   - cp:
       src:  :article_md
@@ -30,9 +47,15 @@
       article = File.read("#{build_dir}/#{article_md}")
       interfaces = File.read("#{build_dir}/interfaces.md")
       article['INTERFACES'] = interfaces
+      article['VERSION'] = go_version
       File.open("#{build_dir}/#{article_md}", 'w') { |file|
         file.write(article)
       }
+ 
+- target:      xml
+  depends:     md
+  description: Generate XML article
+  script:
   - "md2xml -a #{build_dir}/#{article_md} > #{build_dir}/#{article_xml}"
 
 - target:      publish

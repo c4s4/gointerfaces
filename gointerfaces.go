@@ -51,6 +51,9 @@ func parseSourceFile(filename string, source io.Reader, sourceDir string) []Inte
     interfaces := make([]Interface, 0)
     reader := bufio.NewReader(source)
     pack := filename[len(sourceDir)+1:strings.LastIndex(filename, "/")]
+    if strings.HasSuffix(pack, "testdata") {
+        return nil
+    }
     lineNumber := 1
     for {
         line, err := reader.ReadBytes('\n')
@@ -143,7 +146,8 @@ func main() {
         }
         if strings.HasPrefix(header.Name, sourceDir) &&
            strings.HasSuffix(header.Name, ".go") &&
-           !strings.HasSuffix(header.Name, "doc.go") {
+           !strings.HasSuffix(header.Name, "doc.go") &&
+           !strings.HasSuffix(header.Name, "_test.go") {
             newInterfaces := parseSourceFile(header.Name, tarReader, sourceDir)
             interfaces = append(interfaces, newInterfaces...)
         }
