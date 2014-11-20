@@ -33,11 +33,24 @@ func (b ByName) Len() int           {return len(b)}
 func (b ByName) Swap(i, j int)      {b[i], b[j] = b[j], b[i]}
 func (b ByName) Less(i, j int) bool {return b[i].Name < b[j].Name}
 
-func parseSourceFile(filename string, source io.Reader) []Interface {
+func majMin(v string) (int, int) {
+    array := strings.Split(strings.Split(v, "rc")[0], ".")
+    major, err := strconv.Atoi(array[0])
+    if err != nil {
+        major = 0
+    }
+    minor, err := strconv.Atoi(array[1])
+    if err != nil {
+        minor = 0
+    }
+    return major, minor
+}
+
+func parseSourceFile(filename string, source io.Reader, sourceDir string) []Interface {
     regexpInterface := regexp.MustCompile(`\s*type\s+([A-Z]\w*)\s+interface\s+{`)
     interfaces := make([]Interface, 0)
     reader := bufio.NewReader(source)
-    pack := filename[11:strings.LastIndex(filename, "/")]
+    pack := filename[len(sourceDir)+1:strings.LastIndex(filename, "/")]
     lineNumber := 1
     for {
         line, err := reader.ReadBytes('\n')
@@ -101,6 +114,12 @@ func main() {
         panic("Must pass go version on command line")
     }
     version := os.Args[1]
+    // source directory changed from 1.4
+    major, minor := majMin(version)
+    sourceDir := "go/src"
+    if major <= 1 && minor < 4 {
+        sourceDir = "go/src/pkg"
+    }
     // download compressed archive
     println("Downloading archive...")
     response, err := http.Get(URL+"go"+version+".src.tar.gz")
@@ -113,7 +132,7 @@ func main() {
     if err != nil {
         panic(err)
     }
-    // parse tar source files in go/src/pkg
+    // parse tar source files in source dir
     println("Parsing archive...")
     tarReader := tar.NewReader(gzipReader)
     interfaces := make([]Interface, 0)
@@ -122,10 +141,10 @@ func main() {
         if err != nil {
             break
         }
-        if strings.HasPrefix(header.Name, "go/src/pkg") &&
+        if strings.HasPrefix(header.Name, sourceDir) &&
            strings.HasSuffix(header.Name, ".go") &&
            !strings.HasSuffix(header.Name, "doc.go") {
-            newInterfaces := parseSourceFile(header.Name, tarReader)
+            newInterfaces := parseSourceFile(header.Name, tarReader, sourceDir)
             interfaces = append(interfaces, newInterfaces...)
         }
     }
