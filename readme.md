@@ -25,3 +25,8 @@ go run gointerfaces.go 1.3.3 | pandoc -f markdown -t html
 You may see the result for *1.3.3* release on this page: <http://sweetohm.net/html/gointerfaces.en.html>.
 
 *Enjoy!*
+
+History
+-------
+
+- *2014-10-29*: First version.
