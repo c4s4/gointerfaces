@@ -21,4 +21,6 @@ Here is the result for release *VERSION*:
 
 INTERFACES
 
+You may find a discussion on these interfaces on this page: <http://mwholt.blogspot.fr/2014/08/maximizing-use-of-interfaces-in-go.html>.
+
 *Enjoy!*
