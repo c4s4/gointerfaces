@@ -16,7 +16,7 @@ import (
 
 const (
 	URL        = "https://storage.googleapis.com/golang/"
-	SOURCE_URL = "https://code.google.com/p/go/source/browse/"
+	SOURCE_URL = "https://golang.org/src/"
 )
 
 type Interface struct {
