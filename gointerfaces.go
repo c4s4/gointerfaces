@@ -17,7 +17,7 @@ import (
 const (
 	URL = "https://storage.googleapis.com/golang/"
 	// expects go version, source file and line number
-	SOURCE_URL = "https://github.com/golang/go/blob/release-branch.go%s/%s#L%d"
+	SOURCE_URL = "https://github.com/golang/go/blob/go%s/%s#L%d"
 )
 
 type Interface struct {
