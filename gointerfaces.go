@@ -15,8 +15,9 @@ import (
 )
 
 const (
-	URL        = "https://storage.googleapis.com/golang/"
-	SOURCE_URL = "https://golang.org/"
+	URL = "https://storage.googleapis.com/golang/"
+	// expects go version, source file and line number
+	SOURCE_URL = "https://github.com/golang/go/blob/release-branch.go%s/%s#L%d"
 )
 
 type Interface struct {
@@ -46,7 +47,7 @@ func majMin(v string) (int, int) {
 	return major, minor
 }
 
-func parseSourceFile(filename string, source io.Reader, sourceDir string) []Interface {
+func parseSourceFile(filename string, source io.Reader, sourceDir string, version string) []Interface {
 	regexpInterface := regexp.MustCompile(`\s*type\s+([A-Z]\w*)\s+interface\s+{`)
 	interfaces := make([]Interface, 0)
 	reader := bufio.NewReader(source)
@@ -67,7 +68,7 @@ func parseSourceFile(filename string, source io.Reader, sourceDir string) []Inte
 				Package:    string(pack),
 				SourceFile: filename[3:],
 				LineNumber: strconv.Itoa(lineNumber),
-				Link:       SOURCE_URL + filename[3:] + "?name=release#" + strconv.Itoa(lineNumber),
+				Link:       fmt.Sprintf(SOURCE_URL, version, filename[3:], lineNumber),
 			}
 			interfaces = append(interfaces, interf)
 		}
@@ -148,7 +149,7 @@ func main() {
 			strings.HasSuffix(header.Name, ".go") &&
 			!strings.HasSuffix(header.Name, "doc.go") &&
 			!strings.HasSuffix(header.Name, "_test.go") {
-			newInterfaces := parseSourceFile(header.Name, tarReader, sourceDir)
+			newInterfaces := parseSourceFile(header.Name, tarReader, sourceDir, version)
 			interfaces = append(interfaces, newInterfaces...)
 		}
 	}
