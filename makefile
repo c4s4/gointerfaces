@@ -5,7 +5,7 @@ BLOG_MD=blog.md
 BLOG_SITE=../blog/txt/108.md
 ARTICLE_MD=article.en.md
 ARTICLE_XML=article.en.xml
-ARTICLE_SITE=../sweetohm/pages/$(NAME).en.md
+ARTICLE_SITE=../sweetohm/pages/$(NAME).en.xml
 
 YELLOW=\033[93m
 CLEAR=\033[0m
