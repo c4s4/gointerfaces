@@ -46,3 +46,11 @@ release: clean blog article publish tag
 clean:
 	@echo "$(YELLOW)Clean generated files$(CLEAR)"
 	rm -rf $(BUILD_DIR)
+
+help:
+	@echo "$(YELLOW)interfaces$(CLEAR) Build the list of interfaces"
+	@echo "$(YELLOW)blog$(CLEAR)       Build the blog entry"
+	@echo "$(YELLOW)article$(CLEAR)    Build the article"
+	@echo "$(YELLOW)publish$(CLEAR)    Copy generated blog and/or article in projects"
+	@echo "$(YELLOW)clean$(CLEAR)      Delete generated files"
+	@echo "$(YELLOW)help$(CLEAR)       Print this help page"
