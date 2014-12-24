@@ -29,4 +29,5 @@ You may see the result for *1.3.3* release on this page: <http://sweetohm.net/ht
 History
 -------
 
+- **1.1.0** (*2014-12-24*): ixed for GO 1.4 and links point to sources on Github.
 - **1.0.0** (*2014-10-29*): First release.
