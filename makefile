@@ -1,3 +1,4 @@
+VERSION=1.1.0
 GO_VERSION=1.4
 NAME=gointerfaces
 BUILD_DIR=build
@@ -34,6 +35,13 @@ publish:
 	@echo "$(YELLOW)Publish blog and article on site$(CLEAR)"
 	cp $(BUILD_DIR)/$(BLOG_MD) $(BLOG_SITE) 2> /dev/null || :
 	cp $(BUILD_DIR)/$(ARTICLE_XML) $(ARTICLE_SITE) 2> /dev/null || :
+
+tag:
+	@echo "$(YELLOW)Tagging for release $(VERSION)"
+	git tag $(version)
+	git push --tags
+
+release: clean blog article publish tag
 
 clean:
 	@echo "$(YELLOW)Clean generated files$(CLEAR)"
