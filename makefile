@@ -38,7 +38,7 @@ publish:
 
 tag:
 	@echo "$(YELLOW)Tagging for release $(VERSION)$(CLEAR)"
-	git tag $(version)
+	git tag "$(VERSION)"
 	git push --tags
 
 release: clean blog article publish tag
