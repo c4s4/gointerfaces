@@ -37,7 +37,7 @@ publish:
 	cp $(BUILD_DIR)/$(ARTICLE_XML) $(ARTICLE_SITE) 2> /dev/null || :
 
 tag:
-	@echo "$(YELLOW)Tagging for release $(VERSION)"
+	@echo "$(YELLOW)Tagging for release $(VERSION)$(CLEAR)"
 	git tag $(version)
 	git push --tags
 
