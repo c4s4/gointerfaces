@@ -19,4 +19,6 @@ Voici le résultat pour la release *VERSION*:
 
 INTERFACES
 
+On pourra trouver une discussion sur ces interfaces dans l'article suivant (en anglais) : <http://mwholt.blogspot.fr/2014/08/maximizing-use-of-interfaces-in-go.html>.
+
 *Enjoy!*
