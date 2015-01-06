@@ -1,6 +1,5 @@
 VERSION=1.1.0
-#GO_VERSIONS= 1.0.3 1.1.2 1.2.2 1.3.3 1.4
-GO_VERSIONS= 1.2.2 1.3.3 1.4
+#GO_VERSION=1.0.3 1.1.2 1.2.2 1.3.3 1.4
 GO_VERSION=1.4
 NAME=gointerfaces
 BUILD_DIR=build
@@ -16,12 +15,9 @@ CLEAR=\033[0m
 all: clean blog article publish
 
 interfaces:
-	@echo "$(YELLOW)Generate interfaces lists$(CLEAR)"
+	@echo "$(YELLOW)Generate interfaces list$(CLEAR)"
 	mkdir -p $(BUILD_DIR)
-	@for version in $(GO_VERSIONS); do \
-		echo "Building interfaces list for version $$version:"; \
-		go run $(NAME).go $$version > $(BUILD_DIR)/interfaces-$$version.md; \
-	done
+	go run $(NAME).go $(GO_VERSION) > $(BUILD_DIR)/interfaces.md
 
 blog: interfaces
 	@echo "$(YELLOW)Generate blog article$(CLEAR)"
