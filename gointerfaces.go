@@ -21,8 +21,12 @@ const (
 )
 
 type Interface struct {
-	Name       string
-	Package    string
+	Name    string
+	Package string
+}
+
+type InterfaceLocation struct {
+	Version    string
 	SourceFile string
 	LineNumber string
 	Link       string
@@ -47,9 +51,9 @@ func majMin(v string) (int, int) {
 	return major, minor
 }
 
-func parseSourceFile(filename string, source io.Reader, sourceDir string, version string) []Interface {
+func parseSourceFile(filename string, source io.Reader, sourceDir string, version string) map[Interface]InterfaceLocation {
 	regexpInterface := regexp.MustCompile(`\s*type\s+([A-Z]\w*)\s+interface\s+{`)
-	interfaces := make([]Interface, 0)
+	interfaces := make(map[Interface]InterfaceLocation, 0)
 	reader := bufio.NewReader(source)
 	pack := filename[len(sourceDir)+1 : strings.LastIndex(filename, "/")]
 	if strings.HasSuffix(pack, "testdata") {
@@ -64,13 +68,16 @@ func parseSourceFile(filename string, source io.Reader, sourceDir string, versio
 		matches := regexpInterface.FindSubmatch(line)
 		if len(matches) > 0 {
 			interf := Interface{
-				Name:       string(matches[1]),
-				Package:    string(pack),
+				Name:    string(matches[1]),
+				Package: string(pack),
+			}
+			location := InterfaceLocation{
+				Version:    version,
 				SourceFile: filename[3:],
 				LineNumber: strconv.Itoa(lineNumber),
 				Link:       fmt.Sprintf(SOURCE_URL, version, filename[3:], lineNumber),
 			}
-			interfaces = append(interfaces, interf)
+			interfaces[interf] = location
 		}
 		if err == io.EOF {
 			break
@@ -112,12 +119,9 @@ func printInterfaces(interfaces []Interface) {
 	}
 }
 
-func main() {
-	// read version on command line
-	if len(os.Args) != 2 {
-		panic("Must pass go version on command line")
-	}
-	version := os.Args[1]
+func interfacesForVersion(version string) map[Interface]InterfaceLocation {
+	println(fmt.Sprintf("Generating interface list for version %s...", version))
+	interfaces := make(map[Interface]InterfaceLocation)
 	// source directory changed from 1.4
 	major, minor := majMin(version)
 	sourceDir := "go/src"
@@ -125,7 +129,6 @@ func main() {
 		sourceDir = "go/src/pkg"
 	}
 	// download compressed archive
-	println("Downloading archive...")
 	response, err := http.Get(URL + "go" + version + ".src.tar.gz")
 	if err != nil {
 		panic(err)
@@ -137,9 +140,7 @@ func main() {
 		panic(err)
 	}
 	// parse tar source files in source dir
-	println("Parsing archive...")
 	tarReader := tar.NewReader(gzipReader)
-	interfaces := make([]Interface, 0)
 	for {
 		header, err := tarReader.Next()
 		if err != nil {
@@ -150,10 +151,28 @@ func main() {
 			!strings.HasSuffix(header.Name, "doc.go") &&
 			!strings.HasSuffix(header.Name, "_test.go") {
 			newInterfaces := parseSourceFile(header.Name, tarReader, sourceDir, version)
-			interfaces = append(interfaces, newInterfaces...)
+			for key, value := range newInterfaces {
+				interfaces[key] = value
+			}
 		}
 	}
+	return interfaces
+}
+
+func main() {
+	// read versions on command line
+	if len(os.Args) < 2 {
+		panic("Must pass go version(s) on command line")
+	}
+	versions := os.Args[1:]
+	// iterate on versions
+	interfacesByVersion := make(map[string][]Interface)
+	for _, version := range versions {
+		interfaces := interfacesList(version)
+		interfacesByVersion[version] = interfaces
+	}
 	// print the result
+	println("Printing table...")
 	sort.Sort(ByName(interfaces))
 	printInterfaces(interfaces)
 }
