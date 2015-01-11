@@ -6,7 +6,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"net/http"
+	//	"net/http"
 	"os"
 	"regexp"
 	"sort"
@@ -17,7 +17,7 @@ import (
 const (
 	URL = "https://storage.googleapis.com/golang/"
 	// expects go version, source file and line number
-	SOURCE_URL = "https://github.com/golang/go/blob/go%s/%s#L%d"
+	SOURCE_URL = "https://github.com/golang/go/blob/go%s/%s#L%s"
 )
 
 type Interface struct {
@@ -47,6 +47,9 @@ func (il InterfaceList) AddInterface(name, pkg, version, sourceFile, lineNumber 
 		SourceFile: sourceFile,
 		LineNumber: lineNumber,
 		Link:       link,
+	}
+	if il[interf] == nil {
+		il[interf] = make(map[string]Location)
 	}
 	il[interf][version] = location
 }
@@ -106,14 +109,22 @@ func addInterfaces(version string, interfaces InterfaceList) {
 	if major <= 1 && minor < 4 {
 		sourceDir = "go/src/pkg"
 	}
-	// download compressed archive
-	response, err := http.Get(URL + "go" + version + ".src.tar.gz")
+	// DEBUG
+	// // download compressed archive
+	// response, err := http.Get(URL + "go" + version + ".src.tar.gz")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// reader := response.Body
+	// defer response.Body.Close()
+	// read compressed archive in go/ directory
+	filename := "go/go" + version + ".src.tar.gz"
+	reader, err := os.Open(filename)
 	if err != nil {
 		panic(err)
 	}
-	defer response.Body.Close()
 	// gunzip the archive stream
-	gzipReader, err := gzip.NewReader(response.Body)
+	gzipReader, err := gzip.NewReader(reader)
 	if err != nil {
 		panic(err)
 	}
@@ -135,7 +146,7 @@ func addInterfaces(version string, interfaces InterfaceList) {
 
 func printInterfaces(interfaceList InterfaceList, versions []string) {
 	interfaces := make([]Interface, 0)
-	for _, i := range interfaces {
+	for i, _ := range interfaceList {
 		interfaces = append(interfaces, i)
 	}
 	sort.Sort(ByName(interfaces))
