@@ -25,11 +25,30 @@ type Interface struct {
 	Package string
 }
 
-type InterfaceLocation struct {
-	Version    string
+type Location struct {
 	SourceFile string
 	LineNumber string
 	Link       string
+}
+
+type InterfaceList map[Interface]map[string]Location
+
+func NewInterfaceList() InterfaceList {
+	return make(map[Interface]map[string]Location)
+}
+
+func (il InterfaceList) AddInterface(name, pkg, version, sourceFile, lineNumber string) {
+	interf := Interface{
+		Name:    name,
+		Package: pkg,
+	}
+	link := fmt.Sprintf(SOURCE_URL, version, sourceFile, lineNumber)
+	location := Location{
+		SourceFile: sourceFile,
+		LineNumber: lineNumber,
+		Link:       link,
+	}
+	il[interf][version] = location
 }
 
 type ByName []Interface
@@ -38,7 +57,7 @@ func (b ByName) Len() int           { return len(b) }
 func (b ByName) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
 func (b ByName) Less(i, j int) bool { return b[i].Name < b[j].Name }
 
-func majMin(v string) (int, int) {
+func versionMajorMinor(v string) (int, int) {
 	array := strings.Split(strings.Split(v, "rc")[0], ".")
 	major, err := strconv.Atoi(array[0])
 	if err != nil {
@@ -51,13 +70,12 @@ func majMin(v string) (int, int) {
 	return major, minor
 }
 
-func parseSourceFile(filename string, source io.Reader, sourceDir string, version string) map[Interface]InterfaceLocation {
+func parseSourceFile(filename string, source io.Reader, sourceDir string, version string, interfaces InterfaceList) {
 	regexpInterface := regexp.MustCompile(`\s*type\s+([A-Z]\w*)\s+interface\s+{`)
-	interfaces := make(map[Interface]InterfaceLocation, 0)
 	reader := bufio.NewReader(source)
 	pack := filename[len(sourceDir)+1 : strings.LastIndex(filename, "/")]
 	if strings.HasSuffix(pack, "testdata") {
-		return nil
+		return
 	}
 	lineNumber := 1
 	for {
@@ -67,63 +85,23 @@ func parseSourceFile(filename string, source io.Reader, sourceDir string, versio
 		}
 		matches := regexpInterface.FindSubmatch(line)
 		if len(matches) > 0 {
-			interf := Interface{
-				Name:    string(matches[1]),
-				Package: string(pack),
-			}
-			location := InterfaceLocation{
-				Version:    version,
-				SourceFile: filename[3:],
-				LineNumber: strconv.Itoa(lineNumber),
-				Link:       fmt.Sprintf(SOURCE_URL, version, filename[3:], lineNumber),
-			}
-			interfaces[interf] = location
+			name := string(matches[1])
+			pkg := string(pack)
+			sourceFile := filename[3:]
+			lineNumber := strconv.Itoa(lineNumber)
+			interfaces.AddInterface(name, pkg, version, sourceFile, lineNumber)
 		}
 		if err == io.EOF {
 			break
 		}
 		lineNumber += 1
 	}
-	return interfaces
 }
 
-func printInterfaces(interfaces []Interface) {
-	lenName := 0
-	lenPackage := 0
-	lenSourceFile := 0
-	lenLineNumber := 0
-	for _, i := range interfaces {
-		if len(i.Name)+len(i.Link)+4 > lenName {
-			lenName = len(i.Name) + len(i.Link) + 4
-		}
-		if len(i.Package) > lenPackage {
-			lenPackage = len(i.Package)
-		}
-		if len(i.SourceFile) > lenSourceFile {
-			lenSourceFile = len(i.SourceFile)
-		}
-		if len(i.LineNumber) > lenLineNumber {
-			lenLineNumber = len(i.LineNumber)
-		}
-	}
-	formatLine := "%-" + strconv.Itoa(lenName) + "s  %-" + strconv.Itoa(lenPackage) +
-		"s  %-" + strconv.Itoa(lenSourceFile) + "s  %-" + strconv.Itoa(lenLineNumber) +
-		"s\n"
-	fmt.Printf(formatLine, "Interface", "Package", "Source File", "Line")
-	separator := strings.Repeat("-", lenName) + "  " + strings.Repeat("-", lenPackage) +
-		"  " + strings.Repeat("-", lenSourceFile) + "  " + strings.Repeat("-", lenLineNumber)
-	fmt.Println(separator)
-	for _, i := range interfaces {
-		link := "[" + i.Name + "](" + i.Link + ")"
-		fmt.Printf(formatLine, link, i.Package, i.SourceFile, i.LineNumber)
-	}
-}
-
-func interfacesForVersion(version string) map[Interface]InterfaceLocation {
+func addInterfaces(version string, interfaces InterfaceList) {
 	println(fmt.Sprintf("Generating interface list for version %s...", version))
-	interfaces := make(map[Interface]InterfaceLocation)
 	// source directory changed from 1.4
-	major, minor := majMin(version)
+	major, minor := versionMajorMinor(version)
 	sourceDir := "go/src"
 	if major <= 1 && minor < 4 {
 		sourceDir = "go/src/pkg"
@@ -150,13 +128,58 @@ func interfacesForVersion(version string) map[Interface]InterfaceLocation {
 			strings.HasSuffix(header.Name, ".go") &&
 			!strings.HasSuffix(header.Name, "doc.go") &&
 			!strings.HasSuffix(header.Name, "_test.go") {
-			newInterfaces := parseSourceFile(header.Name, tarReader, sourceDir, version)
-			for key, value := range newInterfaces {
-				interfaces[key] = value
+			parseSourceFile(header.Name, tarReader, sourceDir, version, interfaces)
+		}
+	}
+}
+
+func printInterfaces(interfaceList InterfaceList, versions []string) {
+	interfaces := make([]Interface, 0)
+	for _, i := range interfaces {
+		interfaces = append(interfaces, i)
+	}
+	sort.Sort(ByName(interfaces))
+	lenName := 0
+	lenVersions := make(map[string]int)
+	for _, i := range interfaces {
+		if len(i.Name) > lenName {
+			lenName = len(i.Name)
+		}
+		for _, version := range versions {
+			loc := interfaceList[i][version]
+			lenVersion := len(loc.SourceFile) + len(loc.LineNumber) + len(loc.Link) + 8
+			if lenVersions[version] < lenVersion {
+				lenVersions[version] = lenVersion
 			}
 		}
 	}
-	return interfaces
+	formatLine := "%-" + strconv.Itoa(lenName) + "s"
+	for _, v := range versions {
+		formatLine += " %-" + strconv.Itoa(lenVersions[v])
+	}
+	args := []interface{}{"Interface"}
+	for _, v := range versions {
+		args = append(args, v)
+	}
+	fmt.Printf(formatLine, args...)
+	separator := strings.Repeat("-", lenName) + "  "
+	for _, v := range versions {
+		separator += strings.Repeat("-", lenVersions[v]) + "  "
+	}
+	fmt.Println(separator)
+	for _, i := range interfaces {
+		versionLink := make(map[string]string)
+		for _, v := range versions {
+			versionLink[v] = "[" + interfaceList[i][v].SourceFile + " l." +
+				interfaceList[i][v].LineNumber + "](" +
+				interfaceList[i][v].Link + ")"
+		}
+		args := []interface{}{i.Name}
+		for _, vl := range versionLink {
+			args = append(args, vl)
+		}
+		fmt.Printf(formatLine, args...)
+	}
 }
 
 func main() {
@@ -166,13 +189,11 @@ func main() {
 	}
 	versions := os.Args[1:]
 	// iterate on versions
-	interfacesByVersion := make(map[string][]Interface)
+	interfaces := NewInterfaceList()
 	for _, version := range versions {
-		interfaces := interfacesList(version)
-		interfacesByVersion[version] = interfaces
+		addInterfaces(version, interfaces)
 	}
 	// print the result
 	println("Printing table...")
-	sort.Sort(ByName(interfaces))
-	printInterfaces(interfaces)
+	printInterfaces(interfaces, versions)
 }

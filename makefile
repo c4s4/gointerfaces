@@ -19,6 +19,10 @@ interfaces:
 	mkdir -p $(BUILD_DIR)
 	go run $(NAME).go $(GO_VERSION) > $(BUILD_DIR)/interfaces.md
 
+html: interfaces
+	@echo "$(YELLOW)Generate HTML page$(CLEAR)"
+	pandoc -f markdown -t html $(BUILD_DIR)/interfaces.md > $(BUILD_DIR)/index.html
+
 blog: interfaces
 	@echo "$(YELLOW)Generate blog article$(CLEAR)"
 	cp $(BLOG_MD) $(BUILD_DIR)
@@ -50,6 +54,7 @@ clean:
 
 help:
 	@echo "$(YELLOW)interfaces$(CLEAR) Build the list of interfaces"
+	@echo "$(YELLOW)html$(CLEAR)       Generate HTML page"
 	@echo "$(YELLOW)blog$(CLEAR)       Build the blog entry"
 	@echo "$(YELLOW)article$(CLEAR)    Build the article"
 	@echo "$(YELLOW)publish$(CLEAR)    Copy generated blog and/or article in projects"
