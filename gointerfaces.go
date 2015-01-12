@@ -92,7 +92,7 @@ func parseSourceFile(filename string, source io.Reader, sourceDir string, versio
 	regexpInterface := regexp.MustCompile(`\s*type\s+([A-Z]\w*)\s+interface\s+{`)
 	reader := bufio.NewReader(source)
 	pack := filename[len(sourceDir)+4 : strings.LastIndex(filename, "/")]
-	if strings.HasSuffix(pack, "testdata") {
+	if strings.HasSuffix(pack, "testdata") || strings.HasPrefix(pack, "cmd") {
 		return
 	}
 	lineNumber := 1
