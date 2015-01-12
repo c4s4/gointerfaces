@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	OLD_SRC_URL = "https://storage.googleapis.com/golang/"
+	OLD_SRC_URL = "https://go.googlecode.com/files/"
 	NEW_SRC_URL = "https://storage.googleapis.com/golang/"
 	OLD_SRC_DIR = "src/pkg"
 	NEW_SRC_DIR = "src"
@@ -73,11 +73,19 @@ func srcDirUrl(v string) (string, string) {
 	if err != nil {
 		minor = 0
 	}
+	srcDir := ""
+	srcUrl := ""
 	if major <= 1 && minor < 4 {
-		return OLD_SRC_DIR, OLD_SRC_URL
+		srcDir = OLD_SRC_DIR
 	} else {
-		return NEW_SRC_DIR, NEW_SRC_URL
+		srcDir = NEW_SRC_DIR
 	}
+	if major <= 1 && minor < 2 {
+		srcUrl = OLD_SRC_URL
+	} else {
+		srcUrl = NEW_SRC_URL
+	}
+	return srcDir, srcUrl
 }
 
 func parseSourceFile(filename string, source io.Reader, sourceDir string, version string, interfaces InterfaceList) {

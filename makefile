@@ -1,6 +1,5 @@
 VERSION=1.1.0
-#GO_VERSION=1.0.3 1.1.2 1.2.2 1.3.3 1.4
-GO_VERSION=1.3.3 1.4
+GO_VERSION=1.0.3 1.1.2 1.2.2 1.3.3 1.4
 NAME=gointerfaces
 BUILD_DIR=build
 BLOG_MD=blog.md
