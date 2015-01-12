@@ -151,10 +151,14 @@ func printInterfaces(interfaceList InterfaceList, versions []string) {
 	}
 	sort.Sort(ByName(interfaces))
 	lenName := 0
+	lenPackage := 0
 	lenVersions := make(map[string]int)
 	for _, i := range interfaces {
 		if len(i.Name) > lenName {
 			lenName = len(i.Name)
+		}
+		if len(i.Package) > lenPackage {
+			lenPackage = len(i.Package)
 		}
 		for _, version := range versions {
 			loc := interfaceList[i][version]
@@ -164,32 +168,36 @@ func printInterfaces(interfaceList InterfaceList, versions []string) {
 			}
 		}
 	}
-	formatLine := "%-" + strconv.Itoa(lenName) + "s"
+	formatLine := "%-" + strconv.Itoa(lenName) + "s" + "  %-" + strconv.Itoa(lenPackage) + "s"
 	for _, v := range versions {
-		formatLine += " %-" + strconv.Itoa(lenVersions[v])
+		formatLine += "  %-" + strconv.Itoa(lenVersions[v]) + "s"
 	}
-	args := []interface{}{"Interface"}
+	args := []interface{}{"Interface", "Package"}
 	for _, v := range versions {
 		args = append(args, v)
 	}
-	fmt.Printf(formatLine, args...)
-	separator := strings.Repeat("-", lenName) + "  "
+	fmt.Println(fmt.Sprintf(formatLine, args...))
+	separator := strings.Repeat("-", lenName) + "  " + strings.Repeat("-", lenPackage)
 	for _, v := range versions {
-		separator += strings.Repeat("-", lenVersions[v]) + "  "
+		separator += "  " + strings.Repeat("-", lenVersions[v])
 	}
 	fmt.Println(separator)
 	for _, i := range interfaces {
 		versionLink := make(map[string]string)
 		for _, v := range versions {
-			versionLink[v] = "[" + interfaceList[i][v].SourceFile + " l." +
-				interfaceList[i][v].LineNumber + "](" +
-				interfaceList[i][v].Link + ")"
+			if len(interfaceList[i][v].SourceFile) > 0 {
+				versionLink[v] = "[" + interfaceList[i][v].SourceFile + " l." +
+					interfaceList[i][v].LineNumber + "](" +
+					interfaceList[i][v].Link + ")"
+			} else {
+				versionLink[v] = ""
+			}
 		}
-		args := []interface{}{i.Name}
+		args := []interface{}{i.Name, i.Package}
 		for _, vl := range versionLink {
 			args = append(args, vl)
 		}
-		fmt.Printf(formatLine, args...)
+		fmt.Println(fmt.Sprintf(formatLine, args...))
 	}
 }
 
