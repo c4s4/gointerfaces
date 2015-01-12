@@ -17,7 +17,7 @@ Thus I decided to write a little GO program that would;
 
 The project is on Github: <https://github.com/c4s4/gointerfaces>.
 
-Here is the result for release *VERSION*:
+Here is the result:
 
 INTERFACES
 

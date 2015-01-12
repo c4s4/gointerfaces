@@ -1,9 +1,11 @@
-% id:       108
+% id:       gointerfaces
 % date:     2014-10-28
-% title:    La liste des interfaces de GO
+% title:    Les interfaces du GO
 % author:   Michel Casabianca
 % email:    michel.casabianca@gmail.com
 % keywords: go golang interface
+% lang:     en
+% toc:      no
 
 En assistant à la dotGo, où le buzzword était clairement *l'interface*, je me suis demandé où l'on pouvait se procurer la liste de toutes les interfaces définies dans le langage. J'ai cherché et n'ai trouvé cette information nulle part.
 
@@ -15,7 +17,7 @@ Je me suis donc décidé à écrire un petit programme qui :
 
 Le projet se trouve sur Github : <https://github.com/c4s4/gointerfaces>.
 
-Voici le résultat pour la release *VERSION*:
+Voici le résultat :
 
 INTERFACES
 
