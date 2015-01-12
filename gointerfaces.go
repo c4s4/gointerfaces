@@ -6,7 +6,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	//	"net/http"
+	"net/http"
 	"os"
 	"regexp"
 	"sort"
@@ -15,7 +15,10 @@ import (
 )
 
 const (
-	URL = "https://storage.googleapis.com/golang/"
+	OLD_SRC_URL = "https://storage.googleapis.com/golang/"
+	NEW_SRC_URL = "https://storage.googleapis.com/golang/"
+	OLD_SRC_DIR = "src/pkg"
+	NEW_SRC_DIR = "src"
 	// expects go version, source file and line number
 	SOURCE_URL = "https://github.com/golang/go/blob/go%s/%s#L%s"
 )
@@ -60,7 +63,7 @@ func (b ByName) Len() int           { return len(b) }
 func (b ByName) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
 func (b ByName) Less(i, j int) bool { return b[i].Name < b[j].Name }
 
-func versionMajorMinor(v string) (int, int) {
+func srcDirUrl(v string) (string, string) {
 	array := strings.Split(strings.Split(v, "rc")[0], ".")
 	major, err := strconv.Atoi(array[0])
 	if err != nil {
@@ -70,13 +73,17 @@ func versionMajorMinor(v string) (int, int) {
 	if err != nil {
 		minor = 0
 	}
-	return major, minor
+	if major <= 1 && minor < 4 {
+		return OLD_SRC_DIR, OLD_SRC_URL
+	} else {
+		return NEW_SRC_DIR, NEW_SRC_URL
+	}
 }
 
 func parseSourceFile(filename string, source io.Reader, sourceDir string, version string, interfaces InterfaceList) {
 	regexpInterface := regexp.MustCompile(`\s*type\s+([A-Z]\w*)\s+interface\s+{`)
 	reader := bufio.NewReader(source)
-	pack := filename[len(sourceDir)+1 : strings.LastIndex(filename, "/")]
+	pack := filename[len(sourceDir)+4 : strings.LastIndex(filename, "/")]
 	if strings.HasSuffix(pack, "testdata") {
 		return
 	}
@@ -103,26 +110,14 @@ func parseSourceFile(filename string, source io.Reader, sourceDir string, versio
 
 func addInterfaces(version string, interfaces InterfaceList) {
 	println(fmt.Sprintf("Generating interface list for version %s...", version))
-	// source directory changed from 1.4
-	major, minor := versionMajorMinor(version)
-	sourceDir := "go/src"
-	if major <= 1 && minor < 4 {
-		sourceDir = "go/src/pkg"
-	}
-	// DEBUG
-	// // download compressed archive
-	// response, err := http.Get(URL + "go" + version + ".src.tar.gz")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// reader := response.Body
-	// defer response.Body.Close()
-	// read compressed archive in go/ directory
-	filename := "go/go" + version + ".src.tar.gz"
-	reader, err := os.Open(filename)
+	srcDir, srcUrl := srcDirUrl(version)
+	// download compressed archive
+	response, err := http.Get(srcUrl + "go" + version + ".src.tar.gz")
 	if err != nil {
 		panic(err)
 	}
+	reader := response.Body
+	defer response.Body.Close()
 	// gunzip the archive stream
 	gzipReader, err := gzip.NewReader(reader)
 	if err != nil {
@@ -135,11 +130,11 @@ func addInterfaces(version string, interfaces InterfaceList) {
 		if err != nil {
 			break
 		}
-		if strings.HasPrefix(header.Name, sourceDir) &&
+		if strings.HasPrefix(header.Name, "go/"+srcDir) &&
 			strings.HasSuffix(header.Name, ".go") &&
 			!strings.HasSuffix(header.Name, "doc.go") &&
 			!strings.HasSuffix(header.Name, "_test.go") {
-			parseSourceFile(header.Name, tarReader, sourceDir, version, interfaces)
+			parseSourceFile(header.Name, tarReader, srcDir, version, interfaces)
 		}
 	}
 }
@@ -162,7 +157,7 @@ func printInterfaces(interfaceList InterfaceList, versions []string) {
 		}
 		for _, version := range versions {
 			loc := interfaceList[i][version]
-			lenVersion := len(loc.SourceFile) + len(loc.LineNumber) + len(loc.Link) + 8
+			lenVersion := len(loc.SourceFile) + len(loc.Link) + 4
 			if lenVersions[version] < lenVersion {
 				lenVersions[version] = lenVersion
 			}
@@ -185,17 +180,18 @@ func printInterfaces(interfaceList InterfaceList, versions []string) {
 	for _, i := range interfaces {
 		versionLink := make(map[string]string)
 		for _, v := range versions {
+			srcDir, _ := srcDirUrl(v)
 			if len(interfaceList[i][v].SourceFile) > 0 {
-				versionLink[v] = "[" + interfaceList[i][v].SourceFile + " l." +
-					interfaceList[i][v].LineNumber + "](" +
+				length := len(srcDir) + len(i.Package) + 2
+				versionLink[v] = "[" + interfaceList[i][v].SourceFile[length:] + "](" +
 					interfaceList[i][v].Link + ")"
 			} else {
 				versionLink[v] = ""
 			}
 		}
 		args := []interface{}{i.Name, i.Package}
-		for _, vl := range versionLink {
-			args = append(args, vl)
+		for _, v := range versions {
+			args = append(args, versionLink[v])
 		}
 		fmt.Println(fmt.Sprintf(formatLine, args...))
 	}
