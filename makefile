@@ -1,5 +1,5 @@
 NAME=gointerfaces
-VERSION=1.2.0
+VERSION=1.2.1
 GO_VERSION=1.0.3 1.1.2 1.2.2 1.3.3 1.4.1
 BUILD_DIR=build
 SITE=../sweetohm/pages
