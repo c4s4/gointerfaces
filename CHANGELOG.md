@@ -1,10 +1,17 @@
 Change Log
 ==========
 
-Unreleased
-----------
+1.3.0: 2015-03-28
+-----------------
 
-Files renamed to implement standard.
+### Fixed
+
+- Files renamed to implement standard.
+- Articles moved in relevant project.
+
+### Added
+
+- Automated release regarding branch.
 
 1.2.1: 2015-01-16
 -----------------
