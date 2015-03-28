@@ -31,6 +31,7 @@ release: clean build
 	git diff --quiet --exit-code HEAD || (echo "There are uncommitted changes"; exit 1)
 	git checkout master
 	git merge develop
+	git push
 	git tag "$(VERSION)"
 	git push --tag
 	git checkout develop
