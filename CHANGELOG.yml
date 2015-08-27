@@ -1,0 +1,33 @@
+# Semantic ChangeLog (see https://github.com/c4s4/changelog/)
+
+- version: 1.4.0
+  date:    2015-08-27
+  summary: Updated for GO 1.5
+  fixed:
+  - "Fixed interface regexp so that it doesn't take definitions in comments
+     (such as https://github.com/golang/go/blob/go1.5/src/go/types/predicates.go#L223)."
+
+- version: 1.3.0
+  date:    2015-03-28
+  summary: Improved release process
+  fixed:
+  - "Files renamed to implement standard."
+  - "Articles moved in relevant project."
+  added:
+  - "Automated release regarding branch."
+
+- version: 1.2.1
+  date:    2015-01-16
+  summary: Updated for GO 1.4.1
+
+- version: 1.2.0
+  date:    2015-01-12
+  summary: Added generation for a list of versions
+
+- version: 1.1.0
+  date:    2014-12-24
+  summary: Fixed for GO 1.4 and links point to sources on Github
+
+- version: 1.0.0
+  date:    2014-10-29
+  summary: First release
