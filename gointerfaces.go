@@ -89,7 +89,7 @@ func srcDirUrl(v string) (string, string) {
 }
 
 func parseSourceFile(filename string, source io.Reader, sourceDir string, version string, interfaces InterfaceList) {
-	regexpInterface := regexp.MustCompile(`^\s*type\s+([A-Z]\w*)\s+interface\s+{`)
+	regexpInterface := regexp.MustCompile(`^\s*type\s+([A-Z]\w*)\s+interface\s*{`)
 	reader := bufio.NewReader(source)
 	pack := filename[len(sourceDir)+4 : strings.LastIndex(filename, "/")]
 	if strings.HasSuffix(pack, "testdata") || strings.HasPrefix(pack, "cmd") {
