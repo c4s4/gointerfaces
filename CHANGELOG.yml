@@ -1,5 +1,11 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
+- version: 1.4.1
+  date:    2015-08-28
+  summary: Fixed interface regexp
+  fixed:
+  - "Fixed interface regexp so that it takes empty interfaces."
+
 - version: 1.4.0
   date:    2015-08-27
   summary: Updated for GO 1.5
