@@ -20,7 +20,8 @@ const (
 	OLD_SRC_DIR = "src/pkg"
 	NEW_SRC_DIR = "src"
 	// expects go version, source file and line number
-	SOURCE_URL = "https://github.com/golang/go/blob/go%s/%s#L%s"
+	SOURCE_URL       = "https://github.com/golang/go/blob/go%s/%s#L%s"
+	INTERFACE_REGEXP = `^\s*type\s+([A-Z]\w*)\s+interface\s*{`
 )
 
 type Interface struct {
@@ -89,7 +90,7 @@ func srcDirUrl(v string) (string, string) {
 }
 
 func parseSourceFile(filename string, source io.Reader, sourceDir string, version string, interfaces InterfaceList) {
-	regexpInterface := regexp.MustCompile(`^\s*type\s+([A-Z]\w*)\s+interface\s*{`)
+	regexpInterface := regexp.MustCompile(INTERFACE_REGEXP)
 	reader := bufio.NewReader(source)
 	pack := filename[len(sourceDir)+4 : strings.LastIndex(filename, "/")]
 	if strings.HasSuffix(pack, "testdata") || strings.HasPrefix(pack, "cmd") {
