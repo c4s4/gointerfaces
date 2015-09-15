@@ -166,7 +166,6 @@ func printInterfaces(interfaceList InterfaceList, versions []string) {
 		}
 		for _, version := range versions {
 			loc := interfaceList[i][version]
-			// lenVersion := len(loc.SourceFile) + len(loc.Link) + 4
 			lenVersion := len(loc.Link) + 10
 			if lenVersions[version] < lenVersion {
 				lenVersions[version] = lenVersion
@@ -190,12 +189,8 @@ func printInterfaces(interfaceList InterfaceList, versions []string) {
 	for _, i := range interfaces {
 		versionLink := make(map[string]string)
 		for _, v := range versions {
-			// srcDir, _ := srcDirUrl(v)
 			if len(interfaceList[i][v].SourceFile) > 0 {
 				versionLink[v] = "[source](" + interfaceList[i][v].Link + ")"
-				// length := len(srcDir) + len(i.Package) + 2
-				// versionLink[v] = "[" + interfaceList[i][v].SourceFile[length:] + "](" +
-				// 	interfaceList[i][v].Link + ")"
 			} else {
 				versionLink[v] = "-"
 			}
