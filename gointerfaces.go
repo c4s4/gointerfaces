@@ -166,36 +166,31 @@ func printInterfaces(interfaceList InterfaceList, versions []string) {
 		}
 		for _, version := range versions {
 			loc := interfaceList[i][version]
-			// lenVersion := len(loc.SourceFile) + len(loc.Link) + 4
 			lenVersion := len(loc.Link) + 10
 			if lenVersions[version] < lenVersion {
 				lenVersions[version] = lenVersion
 			}
 		}
 	}
-	formatLine := "%-" + strconv.Itoa(lenName) + "s" + "  %-" + strconv.Itoa(lenPackage) + "s"
+	formatLine := "%-" + strconv.Itoa(lenName) + "s" + " | %-" + strconv.Itoa(lenPackage) + "s"
 	for _, v := range versions {
-		formatLine += "  %-" + strconv.Itoa(lenVersions[v]) + "s"
+		formatLine += " | %-" + strconv.Itoa(lenVersions[v]) + "s"
 	}
 	args := []interface{}{"Interface", "Package"}
 	for _, v := range versions {
 		args = append(args, v)
 	}
 	fmt.Println(fmt.Sprintf(formatLine, args...))
-	separator := strings.Repeat("-", lenName) + "  " + strings.Repeat("-", lenPackage)
+	separator := ":" + strings.Repeat("-", lenName-1) + " | :" + strings.Repeat("-", lenPackage-1)
 	for _, v := range versions {
-		separator += "  " + strings.Repeat("-", lenVersions[v])
+		separator += " | " + strings.Repeat("-", lenVersions[v])
 	}
 	fmt.Println(separator)
 	for _, i := range interfaces {
 		versionLink := make(map[string]string)
 		for _, v := range versions {
-			// srcDir, _ := srcDirUrl(v)
 			if len(interfaceList[i][v].SourceFile) > 0 {
 				versionLink[v] = "[source](" + interfaceList[i][v].Link + ")"
-				// length := len(srcDir) + len(i.Package) + 2
-				// versionLink[v] = "[" + interfaceList[i][v].SourceFile[length:] + "](" +
-				// 	interfaceList[i][v].Link + ")"
 			} else {
 				versionLink[v] = "-"
 			}

@@ -1,5 +1,9 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
+- version: 1.5.1
+  date:    2015-09-15
+  summary: Fixed article tables for blackfriday parser
+
 - version: 1.5.0
   date:    2015-09-10
   summary: Added article generation
