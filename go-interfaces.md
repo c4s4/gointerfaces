@@ -1,12 +1,13 @@
 ---
-title:  Les interfaces du GO
-author: Michel Casabianca
-date:   2014-10-28
-tags:   [go, golang, interface]
-id:     go-interfaces
-email:  casa@sweetohm.net
-lang:   fr
-toc:    no
+title:      Les interfaces du GO
+author:     Michel Casabianca
+date:       2014-10-28
+categories: [articles]
+tags:       [go, golang, interface]
+id:         go-interfaces
+email:      casa@sweetohm.net
+lang:       fr
+toc:        no
 ---
 
 En assistant à la dotGo, où le buzzword était clairement *l'interface*, je me suis demandé où l'on pouvait se procurer la liste de toutes les interfaces définies dans le langage. J'ai cherché et n'ai trouvé cette information nulle part.
