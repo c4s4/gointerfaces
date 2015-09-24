@@ -1,5 +1,9 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
+- version: 1.5.4
+  date:    2015-09-24
+  summary: Changed tags in articles
+
 - version: 1.5.3
   date:    2015-09-24
   summary: Set update date in generated articles

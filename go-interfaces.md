@@ -4,7 +4,7 @@ author:     Michel Casabianca
 date:       2014-10-28
 updated:    UPDATE
 categories: [articles]
-tags:       [go, golang, interface]
+tags:       [golang]
 id:         go-interfaces
 email:      casa@sweetohm.net
 lang:       fr
