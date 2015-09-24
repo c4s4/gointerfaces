@@ -2,6 +2,7 @@
 title:      List of all GO Interfaces
 author:     Michel Casabianca
 date:       2014-10-28
+updated:    UPDATE
 categories: [articles]
 tags:       [go, golang, interface]
 id:         go-interfaces.en

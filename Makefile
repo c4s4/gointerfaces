@@ -31,6 +31,8 @@ articles:
 	cp go-interfaces*.md $(BUILD_DIR)
 	sed -i -e "/INTERFACES/{r $(BUILD_DIR)/interfaces.md" -e "d}" $(BUILD_DIR)/go-interfaces.md
 	sed -i -e "/INTERFACES/{r $(BUILD_DIR)/interfaces.md" -e "d}" $(BUILD_DIR)/go-interfaces.en.md
+	sed -i -e "s/UPDATE/$(shell date -I)/g" $(BUILD_DIR)/go-interfaces.md
+	sed -i -e "s/UPDATE/$(shell date -I)/g" $(BUILD_DIR)/go-interfaces.en.md
 
 release: clean build articles
 	@echo "$(YELLOW)Releasing project$(CLEAR)"

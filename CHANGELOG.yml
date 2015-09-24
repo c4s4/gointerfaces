@@ -1,5 +1,9 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
+- version: 1.5.3
+  date:    2015-09-24
+  summary: Set update date in generated articles
+
 - version: 1.5.2
   date:    2015-09-24
   summary: Updated for GO release 1.4.3
