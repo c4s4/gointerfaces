@@ -19,6 +19,8 @@ Je me suis donc décidé à écrire un petit programme qui :
 - Parse les fichiers sources pour en extraire les interfaces ainsi que le numéro de ligne où elles sont définies.
 - Affiche sur la console la liste de ces interfaces sous la forme d'un tableau markdown.
 
+<!--more-->
+
 Le projet se trouve sur Github : <https://github.com/c4s4/gointerfaces>.
 
 Voici le résultat :

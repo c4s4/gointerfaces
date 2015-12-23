@@ -19,6 +19,8 @@ Thus I decided to write a little GO program that would;
 - Parses source files to extract the interface names and line number where they are defined.
 - Write this list on the console in the markdown format.
 
+<!--more-->
+
 The project is on Github: <https://github.com/c4s4/gointerfaces>.
 
 Here is the result:
