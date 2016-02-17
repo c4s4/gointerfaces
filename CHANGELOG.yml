@@ -1,5 +1,9 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
+- version: 1.6.0
+  date:    2016-02-18
+  summary: Added version 1.6
+
 - version: 1.5.5
   date:    2016-02-12
   summary: Updated version 1.5.2 -> 1.5.3
