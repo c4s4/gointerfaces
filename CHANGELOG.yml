@@ -1,5 +1,9 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
+- version: 1.7.1
+  date:    2016-07-18
+  dummary: Updated versions to 1.6.3 and 1.7rc2
+
 - version: 1.7.0
   date:    2016-07-08
   dummary: Added version 1.7rc1
