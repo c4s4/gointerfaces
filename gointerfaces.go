@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	OLD_SRC_URL = "https://go.googlecode.com/files/"
+	OLD_SRC_URL = "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/go/"
 	NEW_SRC_URL = "https://storage.googleapis.com/golang/"
 	OLD_SRC_DIR = "src/pkg"
 	NEW_SRC_DIR = "src"
