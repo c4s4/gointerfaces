@@ -65,7 +65,7 @@ func (b ByName) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
 func (b ByName) Less(i, j int) bool { return b[i].Name < b[j].Name }
 
 func srcDirUrl(v string) (string, string) {
-	array := strings.Split(strings.Split(v, "rc")[0], ".")
+	array := strings.Split(strings.Split(strings.Split(v, "beta")[0], "rc")[0], ".")
 	major, err := strconv.Atoi(array[0])
 	if err != nil {
 		major = 0
