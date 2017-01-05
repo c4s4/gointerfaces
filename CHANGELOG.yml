@@ -1,5 +1,9 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
+- version: 1.8.0
+  date:    2017-01-05
+  summary: Updated for GO release 1.8beta2
+
 - version: 1.7.3
   date:    2016-12-19
   summary: Updated for GO releases 1.6.4 and 1.7.4
