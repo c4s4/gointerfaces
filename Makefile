@@ -1,6 +1,6 @@
 NAME=gointerfaces
 BUILD_DIR=build
-GO_VERSION=1.0.3 1.1.2 1.2.2 1.3.3 1.4.3 1.5.4 1.6.4 1.7.4 1.8rc1
+GO_VERSION=1.0.3 1.1.2 1.2.2 1.3.3 1.4.3 1.5.4 1.6.4 1.7.5 1.8rc3
 
 YELLOW=\033[1m\033[93m
 CYAN=\033[1m\033[96m
