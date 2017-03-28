@@ -1,7 +1,7 @@
 name:    gointerfaces
 doc:     Build gointerfaces project
 default: test
-extends: :go/simple-command.yml
+extends: :go:simple-command.yml
 
 properties:
   NAME:        'gointerfaces'
