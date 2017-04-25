@@ -1,13 +1,37 @@
 name:    gointerfaces
 doc:     Build gointerfaces project
 default: test
-extends: :go:simple-command.yml
 
 properties:
-  NAME:        'gointerfaces'
+  NAME:      'gointerfaces'
+  VERSION:   '#{run("changelog", "release", "version")}'
+  BUILD_DIR: 'build'
+  ARC_DIR:   '#{BUILD_DIR}/#{NAME}-#{VERSION}'
   GO_VERSIONS: '"1.0.3" "1.1.2" "1.2.2" "1.3.3" "1.4.3" "1.5.4" "1.6.4" "1.7.5" "1.8"'
+  DEPENDENCIES:
+  - 'github.com/mitchellh/gox'
 
 targets:
+
+  deps:
+    doc: Install Go dependencies
+    steps:
+    - for: 'dependency'
+      in:  'DEPENDENCIES'
+      do:
+      - print: 'Getting dependency #{dependency}...'
+      - 'go get "#{dependency}"'
+
+  test:
+    doc: Run Go tests
+    steps:
+    - 'go test'
+
+  build:
+    doc: Build Go application
+    steps:
+    - mkdir: '#{BUILD_DIR}'
+    - 'go build -o #{BUILD_DIR}/#{NAME}'
 
   articles:
     doc: Generate articles
@@ -27,3 +51,29 @@ targets:
       - replace: '#{BUILD_DIR}/#{file}'
         pattern: 'UPDATE'
         with:    '#{now()[0:10]}'
+
+  archive:
+    doc: Build distribution archive
+    steps:
+    - mkdir: '#{BUILD_DIR}/#{NAME}-#{VERSION}/bin/'
+    - 'gox -output=#{ARC_DIR}/bin/{{.Dir}}_{{.OS}}_{{.Arch}}'
+    - copy:
+      - 'README.md'
+      - 'CHANGELOG.yml'
+      - 'LICENSE.txt'
+      todir: '#{ARC_DIR}'
+    - tar: '**/*'
+      dir: '#{ARC_DIR}'
+      prefix: '#{NAME}-#{VERSION}'
+      to: '#{BUILD_DIR}/#{NAME}-#{VERSION}.tar.gz'
+
+  release:
+    doc: Make a release
+    depends: [clean, test, archive]
+    steps:
+    - 'release'
+
+  clean:
+    doc: Clean generated files
+    steps:
+    - delete: '#{BUILD_DIR}'
