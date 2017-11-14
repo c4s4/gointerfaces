@@ -3,7 +3,7 @@
 extends: c4s4/build/go-tool.yml
 
 properties:
-  GO_VERSIONS: '"1.0.3" "1.1.2" "1.2.2" "1.3.3" "1.4.3" "1.5.4" "1.6.4" "1.7.6" "1.8.2" "1.9rc1"'
+  GO_VERSIONS: '"1.0.3" "1.1.2" "1.2.2" "1.3.3" "1.4.3" "1.5.4" "1.6.4" "1.7.6" "1.8.5" "1.9.2"'
 
 targets:
 
@@ -11,7 +11,7 @@ targets:
     doc: Generate articles
     steps:
     - mkdir: "#{BUILD_DIR}"
-    - '$ go run gointerfaces.go #{GO_VERSIONS} > #{BUILD_DIR}/interfaces.md'
+    - $: 'go run gointerfaces.go #{GO_VERSIONS} > #{BUILD_DIR}/interfaces.md'
     - copy:  'go-interfaces*.md'
       todir: '#{BUILD_DIR}'
     - read: '#{BUILD_DIR}/interfaces.md'
@@ -20,8 +20,6 @@ targets:
       in:   'find(BUILD_DIR, "go-interfaces*.md")'
       do:
       - replace: '#{BUILD_DIR}/#{file}'
-        pattern: 'INTERFACES'
-        with:    '#{interfaces}'
-      - replace: '#{BUILD_DIR}/#{file}'
-        pattern: 'UPDATE'
-        with:    '#{now()[0:10]}'
+        with:
+          'INTERFACES': '#{interfaces}'
+          'UPDATE':     '#{now()[0:10]}'
