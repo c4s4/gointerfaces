@@ -1,11 +1,12 @@
 # NeON build file (http://github.com/c4s4/neon)
 
+default: articles
 extends:
 - c4s4/build/golang.yml
 - c4s4/build/release.yml
 
 properties:
-  GO_VERSIONS: '"1.0.3" "1.1.2" "1.2.2" "1.3.3" "1.4.3" "1.5.4" "1.6.4" "1.7.6" "1.8.5" "1.9.2"'
+  GO_VERSIONS: '"1.0.3" "1.1.2" "1.2.2" "1.3.3" "1.4.3" "1.5.4" "1.6.4" "1.7.6" "1.8.5" "1.9.2" "1.10beta2"'
 
 targets:
 
