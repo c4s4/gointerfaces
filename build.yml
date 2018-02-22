@@ -1,6 +1,6 @@
 # NeON build file (http://github.com/c4s4/neon)
 
-default: [clean, articles]
+default: [clean, check, articles]
 extends:
 - c4s4/build/golang.yml
 - c4s4/build/release.yml
