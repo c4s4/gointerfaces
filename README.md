@@ -1,7 +1,9 @@
 GO Interfaces
 =============
 
+<!--
 [![Build Status](https://travis-ci.org/c4s4/gointerfaces.svg?branch=master)](https://travis-ci.org/c4s4/gointerfaces)
+-->
 [![Code Quality](https://goreportcard.com/badge/github.com/c4s4/gointerfaces)](https://goreportcard.com/report/github.com/c4s4/gointerfaces)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 <!--
