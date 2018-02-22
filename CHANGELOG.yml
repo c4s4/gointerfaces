@@ -1,8 +1,8 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
-- version: 1.10.1-SNAPSHOT
+- version: 1.10.1
   date:    2018-02-22
-  summary: Updated for Go release 1.10.1
+  summary: Fixed all warnings
   fixed:
   - "All warnings were fixed."
 
