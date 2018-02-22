@@ -15,38 +15,43 @@ import (
 )
 
 const (
-	OLD_SRC_URL = "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/go/"
-	NEW_SRC_URL = "https://storage.googleapis.com/golang/"
-	OLD_SRC_DIR = "src/pkg"
-	NEW_SRC_DIR = "src"
+	oldSrcURL = "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/go/"
+	newSrcURL = "https://storage.googleapis.com/golang/"
+	oldSrcDir = "src/pkg"
+	newSrcDir = "src"
 	// expects go version, source file and line number
-	SOURCE_URL       = "https://github.com/golang/go/blob/go%s/%s#L%s"
-	INTERFACE_REGEXP = `^\s*type\s+([A-Z]\w*)\s+interface\s*{`
+	sourceURL       = "https://github.com/golang/go/blob/go%s/%s#L%s"
+	interfaceRegexp = `^\s*type\s+([A-Z]\w*)\s+interface\s*{`
 )
 
+// Interface is an interface
 type Interface struct {
 	Name    string
 	Package string
 }
 
+// Location is the location in sources
 type Location struct {
 	SourceFile string
 	LineNumber string
 	Link       string
 }
 
+// InterfaceList is a map of interfaces to their location
 type InterfaceList map[Interface]map[string]Location
 
+// NewInterfaceList builds a list of interfaces
 func NewInterfaceList() InterfaceList {
 	return make(map[Interface]map[string]Location)
 }
 
+// AddInterface adds an interface to a list
 func (il InterfaceList) AddInterface(name, pkg, version, sourceFile, lineNumber string) {
 	interf := Interface{
 		Name:    name,
 		Package: pkg,
 	}
-	link := fmt.Sprintf(SOURCE_URL, version, sourceFile, lineNumber)
+	link := fmt.Sprintf(sourceURL, version, sourceFile, lineNumber)
 	location := Location{
 		SourceFile: sourceFile,
 		LineNumber: lineNumber,
@@ -58,13 +63,20 @@ func (il InterfaceList) AddInterface(name, pkg, version, sourceFile, lineNumber 
 	il[interf][version] = location
 }
 
+// ByName is a list of interfaces
 type ByName []Interface
 
-func (b ByName) Len() int           { return len(b) }
-func (b ByName) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
+// Len returns the length of the list
+func (b ByName) Len() int { return len(b) }
+
+// Swap swaps two interfaces
+func (b ByName) Swap(i, j int) { b[i], b[j] = b[j], b[i] }
+
+// Less tells if i is less than j
 func (b ByName) Less(i, j int) bool { return b[i].Name < b[j].Name }
 
-func srcDirUrl(v string) (string, string) {
+// srcDirUrl returns the URL of source directory
+func srcDirURL(v string) (string, string) {
 	array := strings.Split(strings.Split(strings.Split(v, "beta")[0], "rc")[0], ".")
 	major, err := strconv.Atoi(array[0])
 	if err != nil {
@@ -75,22 +87,23 @@ func srcDirUrl(v string) (string, string) {
 		minor = 0
 	}
 	srcDir := ""
-	srcUrl := ""
+	srcURL := ""
 	if major <= 1 && minor < 4 {
-		srcDir = OLD_SRC_DIR
+		srcDir = oldSrcDir
 	} else {
-		srcDir = NEW_SRC_DIR
+		srcDir = newSrcDir
 	}
 	if major <= 1 && minor < 2 {
-		srcUrl = OLD_SRC_URL
+		srcURL = oldSrcURL
 	} else {
-		srcUrl = NEW_SRC_URL
+		srcURL = newSrcURL
 	}
-	return srcDir, srcUrl
+	return srcDir, srcURL
 }
 
+// parseSourceFile parses a source file and populates the interface list
 func parseSourceFile(filename string, source io.Reader, sourceDir string, version string, interfaces InterfaceList) {
-	regexpInterface := regexp.MustCompile(INTERFACE_REGEXP)
+	regexpInterface := regexp.MustCompile(interfaceRegexp)
 	reader := bufio.NewReader(source)
 	pack := filename[len(sourceDir)+4 : strings.LastIndex(filename, "/")]
 	if strings.HasSuffix(pack, "testdata") || strings.HasPrefix(pack, "cmd") {
@@ -113,15 +126,16 @@ func parseSourceFile(filename string, source io.Reader, sourceDir string, versio
 		if err == io.EOF {
 			break
 		}
-		lineNumber += 1
+		lineNumber++
 	}
 }
 
+// addInterfaces generates interface list for given version
 func addInterfaces(version string, interfaces InterfaceList) {
 	println(fmt.Sprintf("Generating interface list for version %s...", version))
-	srcDir, srcUrl := srcDirUrl(version)
+	srcDir, srcURL := srcDirURL(version)
 	// download compressed archive
-	response, err := http.Get(srcUrl + "go" + version + ".src.tar.gz")
+	response, err := http.Get(srcURL + "go" + version + ".src.tar.gz")
 	if err != nil {
 		panic(err)
 	}
@@ -148,9 +162,10 @@ func addInterfaces(version string, interfaces InterfaceList) {
 	}
 }
 
+// printInterfaces prints interfaces for given versions
 func printInterfaces(interfaceList InterfaceList, versions []string) {
 	interfaces := make([]Interface, 0)
-	for i, _ := range interfaceList {
+	for i := range interfaceList {
 		interfaces = append(interfaces, i)
 	}
 	sort.Sort(ByName(interfaces))
@@ -203,6 +218,7 @@ func printInterfaces(interfaceList InterfaceList, versions []string) {
 	}
 }
 
+// main is the program entry point
 func main() {
 	// read versions on command line
 	if len(os.Args) < 2 {
