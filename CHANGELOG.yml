@@ -1,5 +1,11 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
+- version: 1.10.2
+  date:    2018-04-08
+  summary: Fixed bug
+  fixed:
+  - "Unexported interfaces (such as net/http/I) are not listed anymore."
+
 - version: 1.10.1
   date:    2018-02-22
   summary: Fixed all warnings
