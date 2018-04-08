@@ -21,7 +21,7 @@ const (
 	newSrcDir = "src"
 	// expects go version, source file and line number
 	sourceURL       = "https://github.com/golang/go/blob/go%s/%s#L%s"
-	interfaceRegexp = `^\s*type\s+([A-Z]\w*)\s+interface\s*{`
+	interfaceRegexp = `^type\s+([A-Z]\w*)\s+interface\s*{`
 )
 
 // Interface is an interface

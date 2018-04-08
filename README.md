@@ -28,7 +28,9 @@ This compiles and runs the program that will:
 
 To get result in HTML, you can pipe the output to *pandoc*:
 
-    go run gointerfaces.go 1.4.1 | pandoc -f markdown -t html
+```
+$ go run gointerfaces.go 1.4.1 | pandoc -f markdown -t html
+```
 
 You may see the result on this page: <http://sweetohm.net/html/gointerfaces.en.html>.
 
