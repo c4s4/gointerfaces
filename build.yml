@@ -47,6 +47,6 @@ targets:
 
   release:
     doc: Perform a release
-    depends: [clean, archive]
+    depends: [check, test]
     steps:
     - super:
