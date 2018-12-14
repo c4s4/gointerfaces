@@ -17,8 +17,8 @@ properties:
   - '1.7.6'
   - '1.8.7'
   - '1.9.6'
-  - '1.10.4'
-  - '1.11'
+  - '1.10.6'
+  - '1.11.3'
 
 targets:
 
@@ -47,6 +47,6 @@ targets:
 
   release:
     doc: Perform a release
-    depends: [check, test]
+    depends: [check, test, archive]
     steps:
     - super:
