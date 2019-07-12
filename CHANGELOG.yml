@@ -1,5 +1,9 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
+- version: 1.12.3
+  date:    2019-07-12
+  summary: Reordered Go versions
+
 - version: 1.12.2
   date:    2019-07-09
   summary: Updated for Go 1.11.12 and 1.12.7
