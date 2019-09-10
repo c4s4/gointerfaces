@@ -1,5 +1,9 @@
 # Semantic ChangeLog (see https://github.com/c4s4/changelog/)
 
+- version: 1.13.1
+  date:    2019-09-10
+  summary: Exclude vendor packages
+
 - version: 1.13.0
   date:    2019-09-10
   summary: Updated for Go 1.13
