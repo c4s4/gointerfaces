@@ -6,8 +6,8 @@ extends: [golang, git, changelog]
 properties:
   SWEETOHM: '../sweetohm/content/article'
   GO_VERSIONS:
-  - '1.13.1'
-  - '1.12.10'
+  - '1.13.2'
+  - '1.12.11'
   - '1.11.13'
   - '1.10.8'
   - '1.9.7'
