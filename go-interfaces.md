@@ -1,5 +1,5 @@
 ---
-title:      Les interfaces du GO
+title:      Les interfaces du Go
 author:     Michel Casabianca
 date:       2014-10-28
 updated:    UPDATE
