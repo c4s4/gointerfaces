@@ -1,13 +1,13 @@
 # NeON build file (http://github.com/c4s4/neon)
 
 default: [clean, check, articles]
-extends: [golang, git, changelog]
+extends: [golang, git-master]
 
 properties:
   SWEETOHM: '../sweetohm/content/article'
   GO_VERSIONS:
-  - '1.13.2'
-  - '1.12.11'
+  - '1.13.4'
+  - '1.12.13'
   - '1.11.13'
   - '1.10.8'
   - '1.9.7'
