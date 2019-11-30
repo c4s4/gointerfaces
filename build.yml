@@ -45,9 +45,3 @@ targets:
     - copy:  'go-interfaces*.md'
       dir:   =BUILD_DIR
       todir: =SWEETOHM
-
-  release:
-    doc: Perform a release
-    depends: [check, test, archive]
-    steps:
-    - super:
