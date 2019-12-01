@@ -2,6 +2,7 @@
 
 extends: golang
 default: [clean, check, articles]
+configuration: '~/.neon/github.yml'
 
 properties:
   SWEETOHM: '../sweetohm/content/article'
