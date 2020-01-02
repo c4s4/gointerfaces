@@ -7,8 +7,8 @@ configuration: '~/.neon/github.yml'
 properties:
   SWEETOHM: '../sweetohm/content/article'
   GO_VERSIONS:
-  - '1.13.4'
-  - '1.12.13'
+  - '1.13.5'
+  - '1.12.14'
   - '1.11.13'
   - '1.10.8'
   - '1.9.7'
